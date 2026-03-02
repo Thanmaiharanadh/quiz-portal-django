@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Available Quizzes</h2>
+
+    {% for quiz in quizzes %}
+    <div class="card mb-3 p-3">
+        <h4>{{ quiz.title }}</h4>
+        <p>{{ quiz.description }}</p>
+
+        <a href="{% url 'quiz:quiz_detail' quiz.id %}" class="btn btn-primary">
+            Start Quiz
+        </a>
+    </div>
+    {% empty %}
+    <p>No quizzes available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

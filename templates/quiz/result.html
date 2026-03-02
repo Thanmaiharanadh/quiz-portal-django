@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Quiz Result</h2>
+
+    <div class="card p-4">
+        <h4>{{ quiz.title }}</h4>
+        <p>Your Score: <strong>{{ score }} / {{ total }}</strong></p>
+
+        {% if score == total %}
+        <p class="text-success">Excellent! Perfect score! 🎉</p>
+        {% elif score > total|divisibleby:2 %}
+        <p class="text-primary">Good Job! 👍</p>
+        {% else %}
+        <p class="text-danger">Keep Practicing 💪</p>
+        {% endif %}
+
+        <a href="/" class="btn btn-secondary mt-3">Back to Quiz List</a>
+    </div>
+</div>
+{% endblock %}

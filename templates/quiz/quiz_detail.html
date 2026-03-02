@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+
+<div class="exam-container">
+
+    <!-- HEADER -->
+    <div class="exam-header d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0 fw-bold">{{ quiz.title }}</h5>
+            <small class="text-muted">Online Examination Portal</small>
+        </div>
+
+        <div class="timer-box">
+            <i class="fas fa-clock me-2"></i>
+            Time Left: <span id="timer">30:00</span>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+
+        <!-- LEFT SIDE QUESTIONS -->
+        <div class="col-md-9">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                {% for question in questions %}
+                <div class="question-card mb-4" data-qnum="{{ forloop.counter }}">
+
+                    <h6 class="fw-bold mb-4">
+                        {{ forloop.counter }}. {{ question.question_text }}
+                    </h6>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="option-box">
+                                <input type="radio" name="question_{{ question.id }}" value="1">
+                                <span><strong>A.</strong> {{ question.option1 }}</span>
+                            </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="option-box">
+                                <input type="radio" name="question_{{ question.id }}" value="2">
+                                <span><strong>B.</strong> {{ question.option2 }}</span>
+                            </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="option-box">
+                                <input type="radio" name="question_{{ question.id }}" value="3">
+                                <span><strong>C.</strong> {{ question.option3 }}</span>
+                            </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="option-box">
+                                <input type="radio" name="question_{{ question.id }}" value="4">
+                                <span><strong>D.</strong> {{ question.option4 }}</span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        Submit Exam
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- RIGHT SIDE QUESTION PANEL -->
+        <div class="col-md-3">
+            <div class="question-panel">
+                <h6 class="fw-bold mb-3">Question Panel</h6>
+
+                <div class="d-flex flex-wrap">
+                    {% for question in questions %}
+                    <button type="button" class="btn btn-outline-primary question-btn m-1"
+                        id="qbtn{{ forloop.counter }}">
+                        {{ forloop.counter }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+    /* ================= TIMER ================= */
+
+    let totalTime = 30 * 60;
+    const timerDisplay = document.getElementById("timer");
+    const form = document.querySelector("form");
+
+    function updateTimer() {
+        let minutes = Math.floor(totalTime / 60);
+        let seconds = totalTime % 60;
+
+        timerDisplay.textContent =
+            minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+        if (totalTime <= 0) {
+            clearInterval(timerInterval);
+            alert("Time is up! Exam will be submitted.");
+            form.submit();
+        }
+
+        totalTime--;
+    }
+
+    updateTimer();
+    let timerInterval = setInterval(updateTimer, 1000);
+
+
+    /* ================= HIGHLIGHT FIXED ================= */
+
+    document.querySelectorAll("input[type=radio]").forEach(radio => {
+
+        radio.addEventListener("change", function () {
+
+            let questionCard = this.closest(".question-card");
+
+            let qNumber = questionCard.dataset.qnum;
+
+            let btn = document.getElementById("qbtn" + qNumber);
+
+            if (btn) {
+                btn.classList.remove("btn-outline-primary");
+                btn.classList.add("btn-success");
+            }
+
+        });
+
+    });
+
+</script>
+{% endblock %}
